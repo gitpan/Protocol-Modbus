@@ -1,6 +1,9 @@
-# $Id: $
+# $Id: Exception.pm,v 1.2 2007/02/05 11:16:02 cosimo Exp $
 
 package Protocol::Modbus::Exception;
+
+use strict;
+use overload '""' => \&stringify;
 
 use constant ILLEGAL_FUNCTION_CODE => 0x01;
 use constant ILLEGAL_DATA_ADDRESS  => 0x02;
@@ -22,10 +25,22 @@ sub new
 # Fallback on 'new()'
 *throw = *new;
 
+sub code
+{
+    my $self = $_[0];
+    return $self->{code};
+}
+
+sub function
+{
+    my $self = $_[0];
+    return $self->{function};
+}
+
 sub stringify
 {
     my $self = $_[0];
-    return 'MODBUS EXCEPTION';
+    return sprintf('Modbus Exception (func=%s, code=%s)', $self->function, $self->code);
 }
 
 1;

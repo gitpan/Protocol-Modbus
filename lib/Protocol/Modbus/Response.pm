@@ -34,7 +34,13 @@ sub new
 sub stringify
 {
     my $self = $_[0];
-    return 'RESPONSE_STRING';
+    my $cRes = 'Modbus generic response';
+    if( $self->{_function} )
+    {
+        $cRes = 'Modbus response (func=%s, address=%s, value=%s)';
+        $cRes = sprintf($cRes, $self->{_function}, $self->{_address}, $self->{_value});
+    }
+    return($cRes);
 }
 
 # Frame is the entire packet stream received from transport
@@ -90,20 +96,39 @@ sub process
         return(throw Protocol::Modbus::Exception (function=>$func, code=>$excep));
     }
 
+    #
     # Normal response
+    # Decode bytes that arrived
+    #
     if( $func == &Protocol::Modbus::FUNC_READ_COILS )
     {
         $count = ord substr($pdu, 1, 1);
         @bytes = split //, substr($pdu, 2);
-        $self->{_coils} = join(' ', map { unpack('B*', $_) } @bytes);
+        $self->{_coils} = [ map { my $x = unpack('B*', $_); $_ = reverse $x } @bytes ];
     }
-
+    elsif( $func == &Protocol::Modbus::FUNC_READ_INPUTS )
+    {
+        $count = ord substr($pdu, 1, 1);
+        @bytes = split //, substr($pdu, 2);
+        $self->{_inputs} = [ map { my $x = unpack('B*', $_); $_ = reverse $x } @bytes ];
+    }
+    elsif( $func == &Protocol::Modbus::FUNC_WRITE_COIL )
+    {
+        $self->{_function}= $func;
+        $self->{_address} = unpack 'n', substr($pdu, 1, 2);
+        $self->{_value}   = unpack 'n', substr($pdu, 3, 2);
+    }
     return($self);
 }
 
 sub coils
 {
     $_[0]->{_coils};
+}
+
+sub inputs
+{
+    $_[0]->{_inputs};
 }
 
 # Given function code, return response structure

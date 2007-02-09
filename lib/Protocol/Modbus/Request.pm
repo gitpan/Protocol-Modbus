@@ -81,6 +81,7 @@ sub structure
     my $func = $self->function();
     my @params = ();
 
+    # Multiple read requests
     if( $func == &Protocol::Modbus::FUNC_READ_COILS           ||
         $func == &Protocol::Modbus::FUNC_READ_INPUTS          ||
         $func == &Protocol::Modbus::FUNC_READ_HOLD_REGISTERS  ||
@@ -91,6 +92,16 @@ sub structure
             &Protocol::Modbus::PARAM_QUANTITY
         );
     }
+
+    # Single write requests
+    elsif( $func == &Protocol::Modbus::FUNC_WRITE_COIL )
+    {
+        @params = (
+            &Protocol::Modbus::PARAM_ADDRESS,
+            &Protocol::Modbus::PARAM_VALUE,
+        );
+    }
+
     else
     {
         warn("UNIMPLEMENTED REQUEST");

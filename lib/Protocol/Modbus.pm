@@ -1,3 +1,5 @@
+# $Id: Modbus.pm,v 1.5 2007/02/06 08:05:48 cosimo Exp $
+
 package Protocol::Modbus;
 
 use 5.006001;
@@ -7,12 +9,13 @@ use Protocol::Modbus::Request;
 use Protocol::Modbus::Response;
 use Protocol::Modbus::Transaction;
 use Protocol::Modbus::Transport;
+use Protocol::Modbus::Exception;
 use Carp;
 
 #------------------------------------------------
 #         Modbus module version   
 #------------------------------------------------
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 #------------------------------------------------
 #         Modbus related CONSTANTS
@@ -51,6 +54,11 @@ use constant PARAM_IS_LIST              => 8;
 use constant PARAM_OUTPUT_LIST          => 8;
 use constant PARAM_REGISTER_LIST        => 9;
 
+# How parameters are managed
+#
+# `n' => Big-endian word  (16 bit)
+# 'C' => Unsigned char     (8 bit)
+#
 use constant PARAM_SPEC => [
     undef,                     # 0
     [ 'address',  2, 'n' ],    # 1
@@ -98,11 +106,58 @@ sub readCoilsRequest
     return $self->request(%args);
 }
 
+sub readInputsRequest
+{
+    my($self, %args) = @_;
+    $args{function} = &Protocol::Modbus::FUNC_READ_INPUTS;
+    return $self->request(%args);
+}
+
 sub readHoldRegistersRequest
 {
     my($self, %args) = @_;
     $args{function} = &Protocol::Modbus::FUNC_READ_HOLD_REGISTERS;
     return $self->request(%args);
+}
+
+sub writeCoilRequest
+{
+    my($self, %args) = @_;
+    $args{function} = &Protocol::Modbus::FUNC_WRITE_COIL;
+
+    # The only allowed values are 0x0000 and 0xFF00
+    if( ! exists $args{value} )
+    {
+        return throw Protocol::Modbus::Exception(
+            function => $args{function},
+            code     => &Protocol::Modbus::Exception::ILLEGAL_DATA_VALUE
+        );
+    }
+    elsif( $args{value} != 0 )
+    {
+        # Don't throw exception, auto-convert value (it's more perlish)
+        #
+        #    return throw Protocol::Modbus::Exception(
+        #      function => $args{function},
+        #      code     => &Protocol::Modbus::Exception::ILLEGAL_DATA_VALUE
+        #    );
+        #
+        $args{value} = 0xFF00;
+    }
+
+    return $self->request(%args);
+}
+
+sub close
+{
+    my $self = $_[0];
+    my $transport = $self->transport;
+    my $ok = 1;
+    if( $self->transport->connected() )
+    {
+        $ok = $self->transport->disconnect()
+    }
+    return($ok);
 }
 
 # "Pure" Modbus protocol doesn't need to add anything to requests
@@ -236,7 +291,14 @@ API is surely going to change! Warning! Beta-version ahead!
       function => Protocol::Modbus::FUNC_READ_COILS, # or 0x01
       address  => 0x1234,
       quantity => 1,
-      unit     => 0x07, # Only has sense for Modbus/TCP
+      #unit     => 0x07, # Not required for Modbus/TCP
+  );
+  
+  # ... or another way
+  my $request = $proto->readInputsRequest(
+      address  => 0,
+      quantity => 64,
+      #unit    => 0x07, # Not required for Modbus/TCP
   );
 
   # Dump request as binary packets
@@ -256,6 +318,9 @@ Object-oriented class to abstract generation and parsing of Modbus protocol mess
 This class only handles protocol messages generation and parsing.
 It does not directly interface with your PLC devices.
 For that task, see the Device::PLC CPAN module (when that will be released).
+
+Be sure to check out the C<examples> folder to see some scripts that
+should work out of the box with a Modbus TCP server.
 
 =head1 STATUS
 

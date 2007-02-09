@@ -1,4 +1,4 @@
-# $Id: $
+# $Id: TCP.pm,v 1.2 2007/02/05 11:16:02 cosimo Exp $
 
 package Protocol::Modbus::TCP;
 

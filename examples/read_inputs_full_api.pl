@@ -2,12 +2,12 @@
 #
 # Modbus/TCP Server query
 #
-# Issues a read coils request on an IP address / port
+# Issues a read inputs request on an IP address / port
 # Here is demonstrated the full Modbus transaction API
 #
-# Cosimo  Feb 2st, 2007
+# Cosimo  Feb 5st, 2007
 #
-# $Id: read_coils_full_api.pl,v 1.2 2007/02/05 11:16:02 cosimo Exp $
+# $Id: $
 
 use strict;
 use warnings;
@@ -16,7 +16,7 @@ use Protocol::Modbus;
 
 $| = 1;
 
-my $modbus = Protocol::Modbus->new(driver=>'TCP', transport=>'TCP');
+my $modbus = Protocol::Modbus->new(driver=>'TCP');
 
 # Create transport class
 my $trs = Protocol::Modbus::Transport->new(
@@ -27,7 +27,7 @@ my $trs = Protocol::Modbus::Transport->new(
 );
 
 # with explicit method name
-my $req = $modbus->readCoilsRequest(
+my $req = $modbus->readInputsRequest(
     address  => 0,
     quantity => 64,
 );
@@ -40,10 +40,11 @@ while(1)
     # ... issue the request and get response
     my $res = $trn->execute();
 
-    my @coils = $res->coils();
+    my @inputs = @{ $res->inputs() };
 
-    print 'Coils status: (', join('', @coils), ')', "\r";
+    print 'Inputs status: (', join('', @inputs), ')', "\r";
 
     select(undef, undef, undef, 0.2);
 }
+
 

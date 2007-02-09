@@ -2,6 +2,8 @@ Changes
 docs/readme
 examples/read_coils_full_api.pl
 examples/read_coils_simple.pl
+examples/read_inputs_full_api.pl
+examples/write_coil.pl
 lib/Protocol/Modbus.pm
 lib/Protocol/Modbus/Exception.pm
 lib/Protocol/Modbus/Request.pm
@@ -10,6 +12,7 @@ lib/Protocol/Modbus/TCP.pm
 lib/Protocol/Modbus/Transaction.pm
 lib/Protocol/Modbus/Transport.pm
 lib/Protocol/Modbus/Transport/TCP.pm
+lib/Protocol/Modbus/Transport/Serial.pm
 Makefile.PL
 MANIFEST
 README
@@ -17,4 +20,5 @@ t/000-Protocol-Modbus.t
 t/010-Requests.t
 t/015-Responses.t
 t/020-TcpIp.t
+t/030-Exceptions.t
 META.yml                                 Module meta-data (added by MakeMaker)
