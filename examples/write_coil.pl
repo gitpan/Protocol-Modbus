@@ -5,7 +5,7 @@
 #
 # Cosimo  Feb 5st, 2007
 #
-# $Id: $
+# $Id: write_coil.pl,v 1.2 2007/02/12 10:35:42 cosimo Exp $
 
 use strict;
 use warnings;
@@ -23,6 +23,7 @@ GetOptions(
 ) or die "Wrong options!";
 
 $ip ||= '192.168.11.99';
+$status ||= '';
 
 my $modbus = Protocol::Modbus->new(driver=>'TCP', transport=>'TCP');
 

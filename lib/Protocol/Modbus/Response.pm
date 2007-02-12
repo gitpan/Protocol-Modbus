@@ -8,6 +8,9 @@ use overload 'eq' => \&equals;
 use Protocol::Modbus::Exception;
 use Carp;
 
+our @in = ();
+our @coils = ();
+
 sub equals
 {
     my($x, $y) = @_;
@@ -104,13 +107,27 @@ sub process
     {
         $count = ord substr($pdu, 1, 1);
         @bytes = split //, substr($pdu, 2);
-        $self->{_coils} = [ map { my $x = unpack('B*', $_); $_ = reverse $x } @bytes ];
+        @coils = ();
+        for(@bytes)
+        {
+            $_ = unpack('B*', $_);
+            $_ = reverse;
+            push @coils, split //;
+        }
+        $self->{_coils} = \@coils;
     }
     elsif( $func == &Protocol::Modbus::FUNC_READ_INPUTS )
     {
         $count = ord substr($pdu, 1, 1);
         @bytes = split //, substr($pdu, 2);
-        $self->{_inputs} = [ map { my $x = unpack('B*', $_); $_ = reverse $x } @bytes ];
+        @in    = ();
+        for(@bytes)
+        {
+            $_ = unpack('B*', $_);
+            $_ = reverse;
+            push @in, split //;
+        }
+        $self->{_inputs} = \@in;
     }
     elsif( $func == &Protocol::Modbus::FUNC_WRITE_COIL )
     {

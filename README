@@ -1,4 +1,4 @@
-Protocol-Modbus version 0.01
+Protocol-Modbus version 0.03
 ============================
 
 Object-oriented class to abstract generation and parsing of Modbus

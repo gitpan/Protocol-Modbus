@@ -7,7 +7,7 @@
 #
 # Cosimo  Feb 2st, 2007
 #
-# $Id: read_coils_full_api.pl,v 1.2 2007/02/05 11:16:02 cosimo Exp $
+# $Id: read_coils_full_api.pl,v 1.3 2007/02/12 10:35:42 cosimo Exp $
 
 use strict;
 use warnings;
@@ -40,9 +40,9 @@ while(1)
     # ... issue the request and get response
     my $res = $trn->execute();
 
-    my @coils = $res->coils();
+    my $coils = $res->coils();
 
-    print 'Coils status: (', join('', @coils), ')', "\r";
+    print 'Coils status: (', join('', @$coils), ')', "\r";
 
     select(undef, undef, undef, 0.2);
 }
