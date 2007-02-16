@@ -1,4 +1,4 @@
-# $Id: Modbus.pm,v 1.7 2007/02/12 10:35:43 cosimo Exp $
+# $Id: Modbus.pm,v 1.9 2007/02/16 15:02:42 cosimo Exp $
 
 package Protocol::Modbus;
 
@@ -15,7 +15,7 @@ use Carp;
 #------------------------------------------------
 #         Modbus module version   
 #------------------------------------------------
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
 #------------------------------------------------
 #         Modbus related CONSTANTS
@@ -145,6 +145,21 @@ sub writeCoilRequest
         $args{value} = 0xFF00;
     }
 
+    return $self->request(%args);
+}
+
+sub writeRegisterRequest
+{
+    my($self, %args) = @_;
+    $args{function} = &Protocol::Modbus::FUNC_WRITE_REGISTER;
+
+    if( ! exists $args{value} )
+    {
+        return throw Protocol::Modbus::Exception(
+            function => $args{function},
+            code     => &Protocol::Modbus::Exception::ILLEGAL_DATA_VALUE
+        );
+    }
     return $self->request(%args);
 }
 
@@ -321,6 +336,24 @@ For that task, see the Device::PLC CPAN module (when that will be released).
 
 Be sure to check out the C<examples> folder to see some scripts that
 should work out of the box with a Modbus TCP server.
+
+=head1 METHODS
+
+Main methods are used to build Modbus requests.
+
+=over *
+
+=item  readCoilsRequest
+
+=item  readInputsRequest
+
+=item  readHoldRegistersRequest
+
+=item  writeCoilRequest
+
+=item  writeRegisterRequest
+
+=back
 
 =head1 STATUS
 

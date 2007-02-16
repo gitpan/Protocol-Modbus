@@ -1,4 +1,4 @@
-Protocol-Modbus version 0.03
+Protocol-Modbus version 0.04
 ============================
 
 Object-oriented class to abstract generation and parsing of Modbus
@@ -10,6 +10,8 @@ STATUS
 
 The thing is incomplete now.
 Only the main design is sketched, though it already works!
+Check out the examples to know how it works.
+Documentation is incomplete.
 
 INSTALLATION
 

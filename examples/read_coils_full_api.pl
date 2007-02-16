@@ -7,7 +7,7 @@
 #
 # Cosimo  Feb 2st, 2007
 #
-# $Id: read_coils_full_api.pl,v 1.3 2007/02/12 10:35:42 cosimo Exp $
+# $Id: read_coils_full_api.pl,v 1.4 2007/02/16 10:05:22 cosimo Exp $
 
 use strict;
 use warnings;
@@ -28,8 +28,8 @@ my $trs = Protocol::Modbus::Transport->new(
 
 # with explicit method name
 my $req = $modbus->readCoilsRequest(
-    address  => 0,
-    quantity => 64,
+    address  => 512,
+    quantity => 10,
 );
 
 # Open a new modbus transaction...

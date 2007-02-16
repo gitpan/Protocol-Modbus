@@ -102,6 +102,14 @@ sub structure
         );
     }
 
+    # Single write of register
+    elsif( $func == &Protocol::Modbus::FUNC_WRITE_REGISTER )
+    {
+        @params = (
+            &Protocol::Modbus::PARAM_ADDRESS,
+            &Protocol::Modbus::PARAM_VALUE,
+        );
+    }
     else
     {
         warn("UNIMPLEMENTED REQUEST");

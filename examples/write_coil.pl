@@ -5,7 +5,7 @@
 #
 # Cosimo  Feb 5st, 2007
 #
-# $Id: write_coil.pl,v 1.2 2007/02/12 10:35:42 cosimo Exp $
+# $Id: write_coil.pl,v 1.3 2007/02/16 15:02:26 cosimo Exp $
 
 use strict;
 use warnings;
@@ -19,11 +19,10 @@ GetOptions(
     'ip:s'      => \my $ip,
     'port:s'    => \my $port,
     'address:s' => \my $address,
-    'state:s'   => \my $status,
+    'value:s'   => \my $value,
 ) or die "Wrong options!";
 
 $ip ||= '192.168.11.99';
-$status ||= '';
 
 my $modbus = Protocol::Modbus->new(driver=>'TCP', transport=>'TCP');
 
@@ -38,7 +37,7 @@ my $trs = Protocol::Modbus::Transport->new(
 # with explicit method name
 my $req = $modbus->writeCoilRequest(
     address  => $address,
-    value    => $status eq 'on' ? 0xFF00 : 0x0000,
+    value    => $value,
 );
 
 # Open a new modbus transaction...

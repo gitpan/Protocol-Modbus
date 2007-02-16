@@ -129,11 +129,23 @@ sub process
         }
         $self->{_inputs} = \@in;
     }
-    elsif( $func == &Protocol::Modbus::FUNC_WRITE_COIL )
+    elsif( $func == &Protocol::Modbus::FUNC_WRITE_COIL 
+        || $func == &Protocol::Modbus::FUNC_WRITE_REGISTER )
     {
         $self->{_function}= $func;
         $self->{_address} = unpack 'n', substr($pdu, 1, 2);
         $self->{_value}   = unpack 'n', substr($pdu, 3, 2);
+    }
+    elsif( $func == &Protocol::Modbus::FUNC_READ_HOLD_REGISTERS )
+    {
+        $count = ord substr($pdu, 1, 1);
+        @bytes = split //, substr($pdu, 2);
+        @in    = ();
+        for(@bytes)
+        {
+            push @in, unpack('H*', $_);
+        }
+        $self->{_registers} = \@in;
     }
     return($self);
 }
@@ -146,6 +158,11 @@ sub coils
 sub inputs
 {
     $_[0]->{_inputs};
+}
+
+sub registers
+{
+    $_[0]->{_registers};
 }
 
 # Given function code, return response structure
