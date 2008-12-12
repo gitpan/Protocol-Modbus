@@ -1,4 +1,4 @@
-# $Id: TCP.pm,v 1.2 2007/02/05 11:16:03 cosimo Exp $
+# $Id$
 
 package Protocol::Modbus::Transport::TCP;
 
@@ -79,6 +79,7 @@ sub disconnect
     my $self = $_[0];
     my $sock = $self->{_handle};
     return unless $sock;
+	$self->{_handle} = undef;
     $sock->close();
 }
 
