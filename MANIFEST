@@ -22,3 +22,4 @@ t/015-Responses.t
 t/020-TcpIp.t
 t/030-Exceptions.t
 META.yml                                 Module meta-data (added by MakeMaker)
+META.json                                Module JSON meta-data (added by MakeMaker)

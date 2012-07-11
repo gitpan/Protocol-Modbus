@@ -8,6 +8,8 @@ use base 'Protocol::Modbus::Transport';
 use Carp ();
 use IO::Socket::INET;
 
+use constant DEFAULT_PORT => 502;
+
 sub connect
 {
     my $self = $_[0];
@@ -16,15 +18,18 @@ sub connect
 
     if( ! $self->connected() )
     {
+		my $address = $opt->{address};
+		my $port = $opt->{port} || DEFAULT_PORT;
+
         $sock = IO::Socket::INET->new(
-            PeerAddr => $opt->{address},
-            PeerPort => $opt->{port}    || 502,
+            PeerAddr => $address,
+            PeerPort => $port,
             Timeout  => $opt->{timeout} || 3,
         );
 
         if( ! $sock )
         {
-            Carp::croak('Can\'t connect to Modbus server on ' . $opt->{address} . ':' . $opt->{port});
+            Carp::croak('Can\'t connect to Modbus server on ' . $address . ':' . $port);
             return(0);
         }
 

@@ -13,7 +13,7 @@ use Carp;
 #------------------------------------------------
 #         Modbus module version
 #------------------------------------------------
-our $VERSION = '0.06';
+our $VERSION = '0.07';
 
 #------------------------------------------------
 #         Modbus related CONSTANTS
@@ -265,9 +265,8 @@ sub transaction
 
 sub transport
 {
-    my $self = $_[0];
-    if( @_ )
-    {
+    my $self = shift;
+    if (@_) {
         $self->{_options}->{transport} = $_[0];
     }
     return($self->{_options}->{transport});
