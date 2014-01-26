@@ -23,4 +23,3 @@ t/010-Requests.t
 t/015-Responses.t
 t/020-TcpIp.t
 t/030-Exceptions.t
-META.json                                Module JSON meta-data (added by MakeMaker)
